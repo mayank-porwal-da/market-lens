@@ -6,7 +6,7 @@
 
 ## 🚀 Live Demo
 **https://market-lens-app.streamlit.app/**
-<img width="1858" height="665" alt="image" src="https://github.com/user-attachments/assets/3be65cdf-dccb-47db-88fb-f68e58c30ad8" />
+<img width="1875" height="750" alt="image" src="https://github.com/user-attachments/assets/35546655-b1ea-4f84-8d45-ebefe6276667" />
 
 ---
 
