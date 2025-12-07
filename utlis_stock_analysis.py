@@ -167,35 +167,75 @@ def get_stock_data(tickers, period):
 
 def plot_performance_chart(df):
     """
-    Normalizes prices to percentage change starting at 0% and plots line chart.
+    Plots a professional financial line chart with a neon theme.
     """
     if df.empty:
         st.warning("No data available for the selected range.")
         return None
 
-    # Normalization Formula: (Price / Start_Price - 1) * 100
-    # This makes all assets start at 0%
+    # Normalization
     normalized_df = (df / df.iloc[0] - 1) * 100
     
-    # Create Plotly Chart
+    # Define a "Fintech" Color Palette
+    # Neon Green, Electric Blue, Hot Pink, Amber, Cyan, Purple
+    fintech_colors = [
+        '#00e676', '#2979ff', '#ff1744', '#ffea00', '#d500f9', '#00b0ff'
+    ]
+
     fig = px.line(
         normalized_df, 
         x=normalized_df.index, 
         y=normalized_df.columns,
         title="Relative Performance (%)",
-        labels={"value": "Return (%)", "variable": "Asset", "Date": "Date"}
+        labels={"value": "Return (%)", "variable": "Asset", "Date": "Date"},
+        color_discrete_sequence=fintech_colors # <--- Apply the palette
     )
     
-    # Add a horizontal line at 0%
-    fig.add_hline(y=0, line_dash="dash", line_color="white", opacity=0.5)
+    # Add a horizontal line at 0% (The Baseline)
+    fig.add_hline(y=0, line_dash="dash", line_color="grey", line_width=1, opacity=0.5)
     
-    # Styling
+    # Professional Styling
     fig.update_layout(
-        hovermode="x unified", 
+        height=500, # Standard height
+        hovermode="x unified", # Shows all values for a specific date in one tooltip
         template="plotly_dark",
-        yaxis_title="Growth (%)",
-        legend_title="Assets"
+        
+        # Transparent Backgrounds to blend with Streamlit
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        
+        # Legend styling (Floating inside graph to save space, or bottom)
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            title=None # Remove the word "variable"
+        ),
+        
+        # Axis Styling
+        yaxis=dict(
+            title=None,
+            showgrid=True,
+            gridcolor='rgba(128,128,128,0.1)', # Very faint grid
+            zeroline=False,
+            tickformat="+.1f", # Format: +10.5 (Adds plus sign)
+            ticksuffix="%"
+        ),
+        xaxis=dict(
+            title=None,
+            showgrid=False, # Vertical grids usually add clutter
+            showspikes=True, # Show crosshair line on hover
+            spikethickness=1,
+            spikedash="dot",
+            spikecolor="#999999",
+            spikemode="across"
+        )
     )
+    
+    # Make lines slightly thinner for elegance
+    fig.update_traces(line=dict(width=2))
     
     return fig
 
@@ -330,7 +370,10 @@ def plot_candle_chart(df, ticker):
         xaxis=dict(
             rangeslider_visible=False,
             showgrid=False
-        )
+        ),
+        margin=dict(l=0, r=0, t=40, b=0), # <--- ADD THIS (Removes white borders)
+        paper_bgcolor='rgba(0,0,0,0)',    # Transparent background
+        plot_bgcolor='rgba(0,0,0,0)',     # Transparent plot area
     )
     
     return fig
