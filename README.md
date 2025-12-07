@@ -5,7 +5,7 @@
 ---
 
 ## 🚀 Live Demo
-**[Insert your Streamlit Cloud Link Here]** *(e.g., https://market-lens.streamlit.app)*
+**https://market-lens-app.streamlit.app/**
 
 ---
 
