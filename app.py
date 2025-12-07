@@ -1,17 +1,52 @@
 import streamlit as st
 from utlis_stock_analysis import *
+
 # -----------------------------------------------------------------------------
-# 1. PAGE CONFIGURATION
+# 1. PAGE CONFIGURATION & STYLING
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="MarketLens: Global Market Comparator & Analyzer",
+    page_title="MarketLens Analytics",
     page_icon="📈",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# setting up title for Page
-st.title("Analyze & Compare Stocks / Indexes")
-st.markdown("Compare indices, analyze stocks, and discover market trends.")
+# Custom CSS to tighten layout and give a "Terminal" feel
+st.markdown("""
+    <style>
+        /* Remove huge padding at top of page */
+        .block-container {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        /* Make metric labels smaller and values bigger */
+        [data-testid="stMetricLabel"] {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        /* Hide Streamlit Footer */
+        footer {visibility: hidden;}
+        /* Hide Top Right Menu */
+        #MainMenu {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
+# -----------------------------------------------------------------------------
+# PROFESSIONAL HEADER
+# -----------------------------------------------------------------------------
+c1, c2 = st.columns([0.15, 0.85])
+
+with c1:
+    st.image("https://cdn-icons-png.flaticon.com/512/2422/2422796.png", width=100) # A stock icon
+with c2:
+    st.title("MarketLens: Global Equity Intelligence")
+    st.caption("🚀 Real-Time Comparative Analytics • Technical Deep Dives • Global Index Screener")
+
+custom_divider(height=2, margin_top=5, margin_bottom=20)
 
 # -----------------------------------------------------------------------------
 # 2. CONSTANTS & DATA STRUCTURES
