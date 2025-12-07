@@ -38,13 +38,8 @@ st.markdown("""
 # -----------------------------------------------------------------------------
 # PROFESSIONAL HEADER
 # -----------------------------------------------------------------------------
-c1, c2 = st.columns([0.15, 0.85])
-
-with c1:
-    st.image("https://cdn-icons-png.flaticon.com/512/2422/2422796.png", width=100) # A stock icon
-with c2:
-    st.title("MarketLens: Global Equity Intelligence")
-    st.caption("🚀 Real-Time Comparative Analytics • Technical Deep Dives • Global Index Screener")
+st.title("📈 MarketLens: Global Equity Intelligence")
+st.caption("🚀 Real-Time Comparative Analytics • Technical Deep Dives • Global Index Screener")
 
 custom_divider(height=2, margin_top=5, margin_bottom=20)
 
@@ -411,3 +406,4 @@ if selected_tickers:
 
 else:
     st.info("👆 Please select at least one asset from above options to begin.")
+
