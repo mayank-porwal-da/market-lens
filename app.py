@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 from utlis_stock_analysis import *
 
 # -----------------------------------------------------------------------------
@@ -308,7 +309,103 @@ if selected_tickers:
             # A. Display the Chart
             # (Optional: Rename columns in the dataframe for the chart legend too!)
             df_plot = df_prices.rename(columns=name_map)
-            st.plotly_chart(plot_performance_chart(df_plot), use_container_width=True)
+
+            chart_df = df_plot
+            pre_normalized = False
+            chart_title = "Relative Performance (%)"
+            hline_color = "grey"
+            hline_opacity = 0.5
+
+            if "3." in app_mode:
+                return_mode = st.radio(
+                    "Returns View",
+                    ["Standard Returns", "Sector-Adjusted Returns (Alpha)"],
+                    horizontal=True,
+                    key="mode3_return_mode"
+                )
+
+                if return_mode == "Sector-Adjusted Returns (Alpha)":
+                    st.caption(
+                        "Showing Alpha: A flat line at 0% represents the Benchmark. "
+                        "Lines above 0 indicate the stock is outperforming the sector."
+                    )
+
+                    cum_returns = (df_plot / df_plot.iloc[0] - 1) * 100
+                    benchmark_col = name_map.get(benchmark_ticker, benchmark_ticker)
+
+                    if benchmark_col in cum_returns.columns:
+                        chart_df = cum_returns.sub(cum_returns[benchmark_col], axis=0)
+                        pre_normalized = True
+                        chart_title = "Sector-Adjusted Returns (Alpha)"
+                    else:
+                        st.warning("Benchmark series missing. Showing standard returns.")
+
+                hline_color = "white"
+                hline_opacity = 0.5
+                benchmark_col = name_map.get(benchmark_ticker, benchmark_ticker)
+
+            st.plotly_chart(
+                plot_performance_chart(
+                    chart_df,
+                    pre_normalized=pre_normalized,
+                    title=chart_title,
+                    hline_color=hline_color,
+                    hline_opacity=hline_opacity,
+                    zero_band="3." in app_mode,
+                    zero_band_pct=1.0,
+                    zero_band_color="rgba(255,255,255,0.06)",
+                    benchmark_name=benchmark_col if "3." in app_mode else None,
+                    benchmark_opacity=0.35
+                ),
+                use_container_width=True
+            )
+
+            # --- NEW: DIVERSIFICATION CHECK (Correlation Heatmap) ---
+            if "2." in app_mode:
+                st.subheader("🧩 Diversification Check (Correlation)")
+                st.caption(
+                    "Values near 1.0 mean the stocks move together; values near 0.0 suggest better diversification."
+                )
+
+                df_returns = df_plot.pct_change().dropna(how="all")
+                corr_matrix = df_returns.corr()
+
+                heatmap_fig = px.imshow(
+                    corr_matrix,
+                    text_auto=".2f",
+                    color_continuous_scale=[
+                        [0.0, "#f7fbff"],
+                        [0.25, "#c6dbef"],
+                        [0.5, "#fdd49e"],
+                        [0.75, "#fc8d59"],
+                        [1.0, "#b30000"]
+                    ],
+                    zmin=0,
+                    zmax=1
+                )
+                heatmap_fig.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#e5e7eb"), # Light gray font works for both
+                    margin=dict(l=10, r=10, t=30, b=10),
+                    coloraxis_colorbar=dict(
+                        title="Correlation",
+                        thickness=15,
+                        len=0.9
+                    )
+                )
+
+                # This ensures the text inside the cells contrasts well
+                heatmap_fig.update_traces(
+                    textfont=dict(size=15),
+                    texttemplate="%{z:.2f}"
+                )
+
+                heatmap_fig.update_xaxes(side="bottom")
+                heatmap_fig.update_yaxes(autorange="reversed")
+
+                st.plotly_chart(heatmap_fig, use_container_width=True)
+            # --- END NEW BLOCK ---
             
             # B. Display "Smart Insights"
             st.subheader("⚡ Quick Insights")
