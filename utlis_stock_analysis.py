@@ -165,7 +165,18 @@ def get_stock_data(tickers, period):
     
     return df, was_truncated
 
-def plot_performance_chart(df):
+def plot_performance_chart(
+    df,
+    pre_normalized=False,
+    title="Relative Performance (%)",
+    hline_color="grey",
+    hline_opacity=0.5,
+    zero_band=False,
+    zero_band_pct=1.0,
+    zero_band_color="rgba(255,255,255,0.06)",
+    benchmark_name=None,
+    benchmark_opacity=0.35
+):
     """
     Plots a professional financial line chart with a neon theme.
     """
@@ -174,7 +185,7 @@ def plot_performance_chart(df):
         return None
 
     # Normalization
-    normalized_df = (df / df.iloc[0] - 1) * 100
+    normalized_df = df if pre_normalized else (df / df.iloc[0] - 1) * 100
     
     # Define a "Fintech" Color Palette
     # Neon Green, Electric Blue, Hot Pink, Amber, Cyan, Purple
@@ -186,13 +197,29 @@ def plot_performance_chart(df):
         normalized_df, 
         x=normalized_df.index, 
         y=normalized_df.columns,
-        title="Relative Performance (%)",
+        title=title,
         labels={"value": "Return (%)", "variable": "Asset", "Date": "Date"},
         color_discrete_sequence=fintech_colors # <--- Apply the palette
     )
     
     # Add a horizontal line at 0% (The Baseline)
-    fig.add_hline(y=0, line_dash="dash", line_color="grey", line_width=1, opacity=0.5)
+    fig.add_hline(
+        y=0,
+        line_dash="dash",
+        line_color=hline_color,
+        line_width=1,
+        opacity=hline_opacity
+    )
+
+    # Subtle filled band around 0% for visual context
+    if zero_band:
+        fig.add_hrect(
+            y0=-abs(zero_band_pct),
+            y1=abs(zero_band_pct),
+            fillcolor=zero_band_color,
+            line_width=0,
+            layer="below"
+        )
     
     # Professional Styling
     fig.update_layout(
@@ -236,6 +263,14 @@ def plot_performance_chart(df):
     
     # Make lines slightly thinner for elegance
     fig.update_traces(line=dict(width=2))
+
+    # Fade benchmark line to make outperformance pop
+    if benchmark_name:
+        fig.update_traces(
+            selector=dict(name=benchmark_name),
+            opacity=benchmark_opacity,
+            line=dict(width=2)
+        )
     
     return fig
 
