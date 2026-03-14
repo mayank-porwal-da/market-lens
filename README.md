@@ -24,8 +24,14 @@
     * 🇩🇪 Germany (DAX)
     * 🇬🇧 UK (FTSE 100)
 * **Index Filtering:** Filter huge stock lists by specific indices (e.g., "Show me only Nifty Bank stocks").
+* **Diversification Check:** Correlation heatmap for selected stocks with annotated values.
 
-### 3. 🔬 Deep Dive "Microscope" Mode
+### 3. ⚖️ Benchmark vs Stocks (Alpha View)
+* **Returns Toggle:** Switch between Standard Returns and Sector-Adjusted Returns (Alpha).
+* **Alpha Baseline:** Benchmark flattens to 0% while stocks show outperformance/underperformance.
+* **Visual Focus:** Subtle 0% band and faded benchmark line for clarity.
+
+### 4. 🔬 Deep Dive "Microscope" Mode
 A professional technical analysis suite for individual stocks:
 * **Interactive Charts:** Combined Candlestick + Volume Overlay chart (Plotly).
 * **Volatility Analysis:** View "Avg Daily Volatility" to gauge risk.
@@ -47,7 +53,7 @@ A professional technical analysis suite for individual stocks:
 
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/mayank-porwal-da/market-lens.git]
+    git clone https://github.com/mayank-porwal-da/market-lens.git
     cd market-lens
     ```
 
